@@ -1,0 +1,14 @@
+POST http://<HOST>>/api/rgbw/set
+Accept: */*
+Cache-Control: no-cache
+
+{
+  "rgbw": {
+    "desiredColor": "ffff00ff",
+    "fadeSpeed": 230,
+    "effectSpeed": 230,
+    "effectID": 0
+  }
+}
+
+###
