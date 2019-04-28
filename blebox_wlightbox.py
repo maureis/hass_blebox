@@ -121,7 +121,9 @@ class BleboxWlightBoxLight(Light):
 
             current_color = rgbw_state['desiredColor']
             effect_id = rgbw_state['effectID']
+            LOGGING.debug("Device is available")
         except:
+            LOGGING.debug("Device is not available")
             self._available = False
             current_color = '00000000'
             effect_id = 0
@@ -188,6 +190,7 @@ class BleboxWlightBoxLight(Light):
                 text = yield from req.text()
                 return json.loads(text)['rgbw']
         except:
+            LOGGING.debug("Cannot set RGBW color")
             return None
 
     @asyncio.coroutine
@@ -202,6 +205,7 @@ class BleboxWlightBoxLight(Light):
                 device_state = json.loads(text)
                 return device_state
         except:
+            LOGGING.debug("Cannot get device state")
             return None
 
     @asyncio.coroutine
@@ -216,4 +220,5 @@ class BleboxWlightBoxLight(Light):
                 rgbw_state = json.loads(text)
                 return rgbw_state['rgbw']
         except:
+            LOGGING.debug("Cannot get rgbw state")
             return None
