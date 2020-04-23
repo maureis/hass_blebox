@@ -2,7 +2,7 @@
 
 ## How to load custom components
 
-Copy files to `/config/custom_components/blebox_wlightbox/light.py`.
+Copy files to `/config/custom_components/blebox_wlightbox/light.py`.  
 https://developers.home-assistant.io/docs/en/creating_component_loading.html
 
 
