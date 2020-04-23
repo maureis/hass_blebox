@@ -104,7 +104,7 @@ class BleboxWlightBoxLight(Light):
         device_info = yield from self.async_update_device_info(hass)
 
         if not self._name:
-            self._name = device_info['deviceName'] if device_info else DEFAULT_NAME
+            self._name = device_info['device']['deviceName'] if device_info else DEFAULT_NAME
 
         return device_info
 
@@ -114,16 +114,15 @@ class BleboxWlightBoxLight(Light):
         device_info = None
 
         try:
-            device_state = yield from self.get_device_state(hass)
+            device_info = yield from self.get_device_info(hass)
             rgbw_state = yield from self.get_rgbw_state(hass)
             self._available = True
             self._color_mode = rgbw_state['colorMode']
 
             current_color = rgbw_state['desiredColor']
             effect_id = rgbw_state['effectID']
-            LOGGING.debug("Device is available")
         except:
-            LOGGING.debug("Device is not available")
+            LOGGING.warning("Device is not available")
             self._available = False
             current_color = '00000000'
             effect_id = 0
@@ -142,7 +141,7 @@ class BleboxWlightBoxLight(Light):
         else:
             self.state = False
 
-        return device_state
+        return device_info
 
     @asyncio.coroutine
     def async_update(self):
@@ -190,11 +189,11 @@ class BleboxWlightBoxLight(Light):
                 text = yield from req.text()
                 return json.loads(text)['rgbw']
         except:
-            LOGGING.debug("Cannot set RGBW color")
+            LOGGING.warning("Cannot set RGBW color")
             return None
 
     @asyncio.coroutine
-    def get_device_state(self, hass):
+    def get_device_info(self, hass):
         websession = async_get_clientsession(hass)
         resource = 'http://%s/api/device/state' % self._host
 
@@ -202,10 +201,11 @@ class BleboxWlightBoxLight(Light):
             with async_timeout.timeout(self._timeout, loop=hass.loop):
                 req = yield from websession.get(resource)
                 text = yield from req.text()
-                device_state = json.loads(text)
-                return device_state
+                device_info = json.loads(text)
+                device = device_info['device']
+                return device_info
         except:
-            LOGGING.debug("Cannot get device state")
+            LOGGING.warning("Cannot get device state")
             return None
 
     @asyncio.coroutine
@@ -220,5 +220,5 @@ class BleboxWlightBoxLight(Light):
                 rgbw_state = json.loads(text)
                 return rgbw_state['rgbw']
         except:
-            LOGGING.debug("Cannot get rgbw state")
+            LOGGING.warning("Cannot get rgbw state")
             return None
